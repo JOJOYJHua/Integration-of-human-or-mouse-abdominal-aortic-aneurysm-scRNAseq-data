@@ -1,0 +1,179 @@
+library(Seurat)
+library(ggplot2)
+library(Matrix)
+library(tidyverse)
+library(viridis)
+library(patchwork)
+library(data.table)
+library(dittoSeq)
+library(harmony)
+
+###GSE226492#########
+#########sample1########
+Cai_Con1 <- "E:/sc-RNAseq/CMH_human_AAA_Integration/GSE226492_RAW/Cai_Con1"
+Cai_Con1 <- Read10X(data.dir = Cai_Con1, gene.column = 2)
+Cai_Con1 <- CreateSeuratObject(counts = Cai_Con1, project = "Condtrol3")
+Cai_Con1[["Library"]] <- "Cai_Con1"
+Cai_Con1[["Condition"]] <- "Control"
+Cai_Con1[["percent.mt"]] <- PercentageFeatureSet(Cai_Con1, pattern = "^MT-")
+VlnPlot(Cai_Con1, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
+Cai_Con1 <- subset(Cai_Con1, subset = nFeature_RNA > 200 & nCount_RNA < 50000 & percent.mt < 10)
+
+#########sample2########
+Cai_Con2 <- "E:/sc-RNAseq/CMH_human_AAA_Integration/GSE226492_RAW/Cai_Con2"
+Cai_Con2 <- Read10X(data.dir = Cai_Con2, gene.column = 2)
+Cai_Con2 <- CreateSeuratObject(counts = Cai_Con2, project = "Condtrol4")
+Cai_Con2[["Library"]] <- "Cai_Con2"
+Cai_Con2[["Condition"]] <- "Control"
+Cai_Con2[["percent.mt"]] <- PercentageFeatureSet(Cai_Con2, pattern = "^MT-")
+VlnPlot(Cai_Con2, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
+Cai_Con2 <- subset(Cai_Con2, subset = nFeature_RNA > 200 & nCount_RNA < 50000 & percent.mt < 10)
+
+#########sample3########
+Cai_Con3 <- "E:/sc-RNAseq/CMH_human_AAA_Integration/GSE226492_RAW/Cai_Con3"
+Cai_Con3 <- Read10X(data.dir = Cai_Con3, gene.column = 2)
+Cai_Con3 <- CreateSeuratObject(counts = Cai_Con3, project = "Condtrol5")
+Cai_Con3[["Library"]] <- "Cai_Con3"
+Cai_Con3[["Condition"]] <- "Control"
+Cai_Con3[["percent.mt"]] <- PercentageFeatureSet(Cai_Con3, pattern = "^MT-")
+VlnPlot(Cai_Con3, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
+Cai_Con3 <- subset(Cai_Con3, subset = nFeature_RNA > 200 & nCount_RNA < 50000 & percent.mt < 10)
+
+#########sample4########
+Cai_AAA1 <- "E:/sc-RNAseq/CMH_human_AAA_Integration/GSE226492_RAW/Cai_AAA1"
+Cai_AAA1 <- Read10X(data.dir = Cai_AAA1, gene.column = 2)
+Cai_AAA1 <- CreateSeuratObject(counts = Cai_AAA1, project = "AAA5")
+Cai_AAA1[["Library"]] <- "Cai_AAA1"
+Cai_AAA1[["Condition"]] <- "AAA"
+Cai_AAA1[["percent.mt"]] <- PercentageFeatureSet(Cai_AAA1, pattern = "^MT-")
+VlnPlot(Cai_AAA1, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
+Cai_AAA1 <- subset(Cai_AAA1, subset = nFeature_RNA > 200 & nCount_RNA < 50000 & percent.mt < 10)
+
+#########sample5########
+Cai_AAA2 <- "E:/sc-RNAseq/CMH_human_AAA_Integration/GSE226492_RAW/Cai_AAA2"
+Cai_AAA2 <- Read10X(data.dir = Cai_AAA2, gene.column = 2)
+Cai_AAA2 <- CreateSeuratObject(counts = Cai_AAA2, project = "AAA6")
+Cai_AAA2[["Library"]] <- "Cai_AAA2"
+Cai_AAA2[["Condition"]] <- "AAA"
+Cai_AAA2[["percent.mt"]] <- PercentageFeatureSet(Cai_AAA2, pattern = "^MT-")
+VlnPlot(Cai_AAA2, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
+Cai_AAA2 <- subset(Cai_AAA2, subset = nFeature_RNA > 200 & nCount_RNA < 50000 & percent.mt < 10)
+
+#########sample6########
+Cai_AAA3 <- "E:/sc-RNAseq/CMH_human_AAA_Integration/GSE226492_RAW/Cai_AAA3"
+Cai_AAA3 <- Read10X(data.dir = Cai_AAA3, gene.column = 2)
+Cai_AAA3 <- CreateSeuratObject(counts = Cai_AAA3, project = "AAA7")
+Cai_AAA3[["Library"]] <- "Cai_AAA3"
+Cai_AAA3[["Condition"]] <- "AAA"
+Cai_AAA3[["percent.mt"]] <- PercentageFeatureSet(Cai_AAA3, pattern = "^MT-")
+VlnPlot(Cai_AAA3, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
+Cai_AAA3 <- subset(Cai_AAA3, subset = nFeature_RNA > 200 & nCount_RNA < 50000 & percent.mt < 10)
+VlnPlot(Cai_AAA3, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
+
+##GSE166676##
+#########sample1########
+Davis_C1 <- "E:/sc-RNAseq/CMH_human_AAA_Integration/GSE166676_RAW/Davis_C1"
+Davis_C1 <- Read10X(data.dir = Davis_C1, gene.column = 2)
+Davis_C1 <- CreateSeuratObject(counts = Davis_C1, project = "Condtrol1")
+Davis_C1[["Library"]] <- "Davis_C1"
+Davis_C1[["Condition"]] <- "Control"
+Davis_C1[["percent.mt"]] <- PercentageFeatureSet(Davis_C1, pattern = "^MT-")
+VlnPlot(Davis_C1, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
+Davis_C1 <- subset(Davis_C1, subset = nFeature_RNA > 200 & nCount_RNA < 50000 & percent.mt < 10)
+VlnPlot(Davis_C1, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
+
+#########sample2########
+Davis_C2 <- "E:/sc-RNAseq/CMH_human_AAA_Integration/GSE166676_RAW/Davis_C2"
+Davis_C2 <- Read10X(data.dir = Davis_C2, gene.column = 2)
+Davis_C2 <- CreateSeuratObject(counts = Davis_C2, project = "Condtrol2")
+Davis_C2[["Library"]] <- "Davis_C2"
+Davis_C2[["Condition"]] <- "Control"
+Davis_C2[["percent.mt"]] <- PercentageFeatureSet(Davis_C2, pattern = "^MT-")
+VlnPlot(Davis_C2, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
+Davis_C2 <- subset(Davis_C2, subset = nFeature_RNA > 200 & nCount_RNA < 50000 & percent.mt < 10)
+VlnPlot(Davis_C2, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
+
+#########sample3###########
+Davis_AAA1 <- "E:/sc-RNAseq/CMH_human_AAA_Integration/GSE166676_RAW/Davis_AAA1"
+Davis_AAA1 <- Read10X(data.dir = Davis_AAA1, gene.column = 2)
+Davis_AAA1 <- CreateSeuratObject(counts = Davis_AAA1, project = "AAA1")
+Davis_AAA1[["Library"]] <- "Davis_AAA1"
+Davis_AAA1[["Condition"]] <- "AAA"
+Davis_AAA1[["percent.mt"]] <- PercentageFeatureSet(Davis_AAA1, pattern = "^MT-")
+VlnPlot(Davis_AAA1, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
+Davis_AAA1 <- subset(Davis_AAA1, subset = nFeature_RNA > 200 & nCount_RNA < 50000 & percent.mt < 10)
+VlnPlot(Davis_AAA1, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
+
+#########sample4###########
+Davis_AAA2 <- "E:/sc-RNAseq/CMH_human_AAA_Integration/GSE166676_RAW/Davis_AAA2"
+Davis_AAA2 <- Read10X(data.dir = Davis_AAA2, gene.column = 2)
+Davis_AAA2 <- CreateSeuratObject(counts = Davis_AAA2, project = "AAA2")
+Davis_AAA2[["Library"]] <- "Davis_AAA2"
+Davis_AAA2[["Condition"]] <- "AAA"
+Davis_AAA2[["percent.mt"]] <- PercentageFeatureSet(Davis_AAA2, pattern = "^MT-")
+VlnPlot(Davis_AAA2, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
+Davis_AAA2 <- subset(Davis_AAA2, subset = nFeature_RNA > 200 & nCount_RNA < 50000 & percent.mt < 10)
+VlnPlot(Davis_AAA2, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
+
+#########sample5###########
+Davis_AAA3 <- "E:/sc-RNAseq/CMH_human_AAA_Integration/GSE166676_RAW/Davis_AAA3"
+Davis_AAA3 <- Read10X(data.dir = Davis_AAA3, gene.column = 2)
+Davis_AAA3 <- CreateSeuratObject(counts = Davis_AAA3, project = "AAA3")
+Davis_AAA3[["Library"]] <- "Davis_AAA3"
+Davis_AAA3[["Condition"]] <- "AAA"
+Davis_AAA3[["percent.mt"]] <- PercentageFeatureSet(Davis_AAA3, pattern = "^MT-")
+VlnPlot(Davis_AAA3, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
+Davis_AAA3 <- subset(Davis_AAA3, subset = nFeature_RNA > 200 & nCount_RNA < 50000 & percent.mt < 10)
+VlnPlot(Davis_AAA3, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
+
+#########sample6###########
+Davis_AAA4 <- "E:/sc-RNAseq/CMH_human_AAA_Integration/GSE166676_RAW/Davis_AAA4"
+Davis_AAA4 <- Read10X(data.dir = Davis_AAA4, gene.column = 2)
+Davis_AAA4 <- CreateSeuratObject(counts = Davis_AAA4, project = "AAA4")
+Davis_AAA4[["Library"]] <- "Davis_AAA4"
+Davis_AAA4[["Condition"]] <- "AAA"
+Davis_AAA4[["percent.mt"]] <- PercentageFeatureSet(Davis_AAA4, pattern = "^MT-")
+VlnPlot(Davis_AAA4, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
+Davis_AAA4 <- subset(Davis_AAA4, subset = nFeature_RNA > 200 & nCount_RNA < 50000 & percent.mt < 10)
+VlnPlot(Davis_AAA4, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
+
+####GSE237230####
+#########sample1########
+Fasolo_AAA1_1 <- "E:/sc-RNAseq/CMH_human_AAA_Integration/GSE237230_RAW/Fasolo_AAA1_1"
+Fasolo_AAA1_1 <- Read10X(data.dir = Fasolo_AAA1_1, gene.column = 2)
+Fasolo_AAA1_1 <- CreateSeuratObject(counts = Fasolo_AAA1_1, project = "AAA8")
+Fasolo_AAA1_1[["Library"]] <- "Fasolo_AAA1_1"
+Fasolo_AAA1_1[["Condition"]] <- "AAA"
+Fasolo_AAA1_1[["percent.mt"]] <- PercentageFeatureSet(Fasolo_AAA1_1, pattern = "^MT-")
+VlnPlot(Fasolo_AAA1_1, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
+Fasolo_AAA1_1 <- subset(Fasolo_AAA1_1, subset = nFeature_RNA > 200 & nCount_RNA < 50000 & percent.mt < 10)
+VlnPlot(Fasolo_AAA1_1, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
+
+#########sample2########
+Fasolo_AAA1_2 <- "E:/sc-RNAseq/CMH_human_AAA_Integration/GSE237230_RAW/Fasolo_AAA1_2"
+Fasolo_AAA1_2 <- Read10X(data.dir = Fasolo_AAA1_2, gene.column = 2)
+Fasolo_AAA1_2 <- CreateSeuratObject(counts = Fasolo_AAA1_2, project = "AAA9")
+Fasolo_AAA1_2[["Library"]] <- "Fasolo_AAA1_2"
+Fasolo_AAA1_2[["Condition"]] <- "AAA"
+Fasolo_AAA1_2[["percent.mt"]] <- PercentageFeatureSet(Fasolo_AAA1_2, pattern = "^MT-")
+VlnPlot(Fasolo_AAA1_2, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
+Fasolo_AAA1_2 <- subset(Fasolo_AAA1_2, subset = nFeature_RNA > 200 & nCount_RNA < 50000 & percent.mt < 10)
+VlnPlot(Fasolo_AAA1_2, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
+
+#########sample3########
+Fasolo_AAA2_1 <- "E:/sc-RNAseq/CMH_human_AAA_Integration/GSE237230_RAW/Fasolo_AAA2_1"
+Fasolo_AAA2_1 <- Read10X(data.dir = Fasolo_AAA2_1, gene.column = 2)
+Fasolo_AAA2_1 <- CreateSeuratObject(counts = Fasolo_AAA2_1, project = "AAA10")
+Fasolo_AAA2_1[["Library"]] <- "Fasolo_AAA2_1"
+Fasolo_AAA2_1[["Condition"]] <- "AAA"
+Fasolo_AAA2_1[["percent.mt"]] <- PercentageFeatureSet(Fasolo_AAA2_1, pattern = "^MT-")
+VlnPlot(Fasolo_AAA2_1, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
+Fasolo_AAA2_1 <- subset(Fasolo_AAA2_1, subset = nFeature_RNA > 200 & nCount_RNA < 50000 & percent.mt < 10)
+VlnPlot(Fasolo_AAA2_1, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
+
+
+
+
+
+
+
