@@ -1,0 +1,80 @@
+library(Seurat)
+library(BPCells)
+library(ggplot2)
+library(Matrix)
+library(tidyverse)
+library(viridis)
+library(patchwork)
+library(data.table)
+library(dittoSeq)
+library(harmony)
+library(RColorBrewer)
+
+YWW_Data <- readRDS("E:/sc-RNAseq/CMH_human_AAA_Integration/Mouse/YWW_Data0701.rds")
+YWW_Macro=subset(YWW_Data, idents = c("1", "6"))
+plot <- DimPlot(YWW_Macro, reduction = "umap")
+plot
+select.cells <- CellSelector(plot = plot)
+Idents(YWW_Macro, cells = select.cells) <- "Filtered"
+YWW_Macro <- subset(x=YWW_Macro, idents = "Filtered")
+YWW_Macro <- NormalizeData(YWW_Macro, verbose = FALSE)
+YWW_Macro <-FindVariableFeatures(YWW_Macro, selection.method = "vst", nfeatures = 2000)
+VariableFeaturePlot(YWW_Macro)
+
+YWW_Macro <-ScaleData(YWW_Macro,verbose = FALSE) 
+YWW_Macro <-RunPCA(YWW_Macro, verbose = FALSE)
+options(repr.plot.height = 2.5, repr.plot.width = 6)
+YWW_Macro <- YWW_Macro %>% 
+  RunHarmony("Library", plot_convergence = TRUE)
+
+YWW_Macro <- YWW_Macro %>% 
+  RunUMAP(reduction = "harmony", dims = 1:20) %>% 
+  FindNeighbors(reduction = "harmony", dims = 1:20) %>% 
+  FindClusters(resolution = 0.1) %>% 
+  identity()
+
+Markers_YWW_Macro <- FindAllMarkers(YWW_Macro, only.pos = TRUE, min.pct = 0.5, logfc.threshold = 0.25)
+top10 <- Markers_YWW_Macro %>% group_by(cluster) %>% top_n(n = 10, wt = avg_log2FC)
+
+#FIG1_A_MICE
+Mcluster_color <- c(
+  "#6FA8DC", 
+  "#D5A6BD", 
+  "#76D7C4", 
+  "#AED6F1", 
+  "#F5B7B1"
+)
+UMAPPlot(YWW_Macro, label = TRUE,ncol=4) + 
+  scale_color_manual(values = Mcluster_color) +
+  coord_fixed()
+
+DimPlot(
+  SetIdent(
+    YWW_Macro,
+    value = ifelse(YWW_Macro$seurat_clusters == 3, YWW_Macro$Condition, "Other")
+  ),
+  reduction = "umap", pt.size = 0.4
+) +
+  scale_color_manual(values = c(SHAM  = "#F7DC6F",
+                                AAA   = "#8E44AD",
+                                Other = "grey80")) +
+  theme_minimal()
+
+#FIG1_B_MICE_Data
+
+dir.create(out_dir <- "E:/sc-RNAseq/CMH_human_AAA_Integration/Mouse/Results_20250701",
+           showWarnings = FALSE, recursive = TRUE)
+for (nm in c("YWW_Data", "YWW_Macro")) {
+  obj <- get(nm)
+  Idents(obj) <- "seurat_clusters"
+  write.csv(
+    as.data.frame.matrix(table(obj$Library, Idents(obj))),
+    file = file.path(out_dir, paste0(nm, "_cluster_counts.csv")),
+    row.names = TRUE
+  )
+}
+
+#FIG1_C_MICE
+top3M <- Markers_YWW_Macro %>% group_by(cluster) %>% top_n(n = 3, wt = avg_log2FC)
+DotPlot(YWW_Macro, features = unique(top3M$gene),dot.scale = 5, cols = "RdGy")+theme(axis.text.x = element_text(angle = 90)) +
+  coord_fixed()
