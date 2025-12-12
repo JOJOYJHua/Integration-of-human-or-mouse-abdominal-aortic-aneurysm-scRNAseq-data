@@ -1,0 +1,150 @@
+    library(Seurat)
+    library(BPCells)
+    library(ggplot2)
+    library(Matrix)
+    library(tidyverse)
+    library(dittoSeq)
+    library(viridis)
+    library(patchwork)
+    library(data.table)
+    library(CellChat)
+
+####LDLRKO SAMPLE####
+data_dirG <- '........../LDLRKO'
+expression_matrixG <- Read10X(data_dirG)
+object_LDLRKO = CreateSeuratObject(counts = expression_matrixG)
+object_LDLRKO[["percent.mt"]] <- PercentageFeatureSet(object_LDLRKO, pattern = "^mt-")
+VlnPlot(object_LDLRKO, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
+object_LDLRKO <- subset(object_LDLRKO, subset = nFeature_RNA > 200 & nCount_RNA < 60000 & percent.mt < 15)
+
+####LDLR_Sparcl1CKO SAMPLE####
+data_dirB <- '......./LDLR_Sparcl1CKO'
+expression_matrixB <- Read10X(data_dirB)
+object_LDLRE_Sparcl1CKO = CreateSeuratObject(counts = expression_matrixB)
+object_LDLRE_Sparcl1CKO[["percent.mt"]] <- PercentageFeatureSet(object_LDLRE_Sparcl1CKO, pattern = "^mt-")
+VlnPlot(object_LDLRE_Sparcl1CKO, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
+object_LDLRE_Sparcl1CKO <- subset(object_LDLRE_Sparcl1CKO, subset = nFeature_RNA > 200 & nCount_RNA < 60000 & percent.mt < 15)
+
+combined <- merge(object_LDLRKO, y =  object_LDLRE_Sparcl1CKO, add.cell.ids = c("G", "B"))
+combined
+unique(sapply(X = strsplit(colnames(combined), split = "_"), FUN = "[", 1))
+combined$orig.ident <- ifelse(grepl("^G_", colnames(combined)), "G", "B")
+table(combined$orig.ident)
+combined <- NormalizeData(combined)
+combined <- FindVariableFeatures(combined)
+VariableFeaturePlot(combined)
+combined <- ScaleData(combined)
+combined <- RunPCA(combined)
+combined <- RunTSNE(combined, dims = 1:10)
+combined <- FindNeighbors(combined, dims = 1:10)
+combined <- FindClusters(combined, resolution = 0.1)
+
+combined <- JoinLayers(combined)
+markers <- FindAllMarkers(combined, only.pos = TRUE, min.pct = 0.5, logfc.threshold = 0.25)
+top20_markers <- markers %>% group_by(cluster) %>% top_n(n = 20, wt = avg_log2FC)
+
+combined$celltype <- as.character(combined$seurat_clusters)
+combined$celltype[combined$seurat_clusters == 0] <- "Bcell"
+combined$celltype[combined$seurat_clusters == 1] <- "Tcell"
+combined$celltype[combined$seurat_clusters == 2] <- "SMC"
+combined$celltype[combined$seurat_clusters == 3] <- "VEC"
+combined$celltype[combined$seurat_clusters == 4] <- "Macrophage"
+combined$celltype[combined$seurat_clusters == 5] <- "StemCell"
+combined$celltype[combined$seurat_clusters == 6] <- "Plasmacell"
+combined$celltype[combined$seurat_clusters == 7] <- "LEC"
+combined$celltype[combined$seurat_clusters == 8] <- "Schwanncell"
+
+#FIG4_A and SFIG4_A
+DimPlot(combined,reduction = "tsne", label = T, label.size = 4) +
+  coord_fixed()
+DimPlot(combined,reduction = "tsne", label = T, label.size = 4, group.by = "orig.ident") +
+  coord_fixed()
+
+#SFIG4_B
+genesB <- c("Ighd", "Fcer2a", "Ms4a1",
+           "Il7r", "Cd3g", "Ctsw",
+           "Myh11", "Sost", "Itih4",
+           "Clec3b", "Srpx", "Svep1",
+           "Csf1r", "Ccl6", "Lyz2",
+           "Hmmr", "Bub1", "Kif4",
+           "Prg2", "Jchain", "Ighg3",
+           "Prox1", "Sox18", "Adgrf5",
+           "Sox10", "Cmtm5", "Mpz")
+DotPlot(combined, features = genesB, cols = c("lightgrey","#7e1e9c"))+theme(axis.text.x = element_text(angle = 90))+
+  coord_fixed()
+
+#FIG4_B
+dittoBarPlot(combined, var = Idents(combined),group.by = "orig.ident", scale = "percent")
+
+#FIG4_C
+VlnPlot(combined, group.by ="orig.ident", features = c("Cxcr5", "Ccr7", "Cd74", "Il7", "Ltb", "Cxcl13"), y.max = (6), pt.size = 0)
+
+{
+  genes <- c("Cxcr5", "Ccr7", "Cd74", "Il7", "Ltb", "Cxcl13")
+  Idents(combined) <- combined$orig.ident
+  markers_s <- FindMarkers(
+    combined,
+    ident.1         = "B",
+    ident.2         = "G",
+    features        = genes,
+    test.use        = "wilcox"
+  ) %>%
+    rownames_to_column("gene") %>%
+    mutate(signif = case_when(
+      p_val_adj < 0.001 ~ "***",
+      p_val_adj < 0.01  ~ "**",
+      p_val_adj < 0.05  ~ "*",
+      TRUE              ~ "ns"
+    )) %>%
+    select(gene, p_val, p_val_adj, signif)
+  markers_s
+}
+
+{
+data.input <- combined[["RNA"]]$data 
+labels <- Idents(combined)
+meta <- data.frame(labels = labels, row.names = names(labels))
+cellChat <- createCellChat(combined, group.by = "celltype", assay = "RNA")
+CellChatDB <- CellChatDB.mouse
+showDatabaseCategory(CellChatDB)
+CellChatDB.use <- subsetDB(CellChatDB, search = "Secreted Signaling", key = "annotation") 
+cellChat@DB <- CellChatDB.use
+cellChat <- subsetData(cellChat)
+cellChat <- identifyOverExpressedGenes(cellChat, do.fast = FALSE)
+cellChat <- identifyOverExpressedInteractions(cellChat)
+}
+
+cellChat <- computeCommunProb(cellChat, type = "truncatedMean", trim = 0.1)
+cellChat <- filterCommunication(cellChat, min.cells = 10)
+cellChat <- aggregateNet(cellChat)
+groupSize <- as.numeric(table(cellChat@idents)
+
+
+#FIG4_D
+par(mfrow = c(1,2), xpd=TRUE)
+netVisual_circle(cellChat@net$count, vertex.weight = groupSize, weight.scale = T, label.edge= F, title.name = "Number of interactions")
+netVisual_circle(cellChat@net$weight, vertex.weight = groupSize, weight.scale = T, label.edge= F, title.name = "Interaction weights/strength")
+
+#FIG4_D and SFIG4_C
+mat <- cellChat@net$weight
+par(mfrow = c(3,4), xpd=TRUE)
+for (i in 1:nrow(mat)) {
+  mat2 <- matrix(0, nrow = nrow(mat), ncol = ncol(mat), dimnames = dimnames(mat))
+  mat2[i, ] <- mat[i, ]
+  netVisual_circle(mat2, vertex.weight = groupSize, weight.scale = T, edge.weight.max = max(mat), label.edge= F, title.name = rownames(mat)[i]) 
+}
+
+#FIG4_F
+{
+pathways.show <- c("LT",
+                   "CD40", 
+                   "CXCL", 
+                   "CCL", 
+                   "CXCL", 
+                   "IL2", 
+                   "MIF") 
+netVisual_chord_gene(cellChat, signaling = pathways.show, sources.use = c("LEC"),
+                                         targets.use = c("SMC","VEC","Macrophage","Plasmacell","Schwanncell","Bcell","Tcell","LEC"))
+}
+
+
