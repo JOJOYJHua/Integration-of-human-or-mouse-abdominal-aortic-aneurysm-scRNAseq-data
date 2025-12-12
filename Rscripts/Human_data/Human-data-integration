@@ -171,9 +171,86 @@ VlnPlot(Fasolo_AAA2_1, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"),
 Fasolo_AAA2_1 <- subset(Fasolo_AAA2_1, subset = nFeature_RNA > 200 & nCount_RNA < 50000 & percent.mt < 10)
 VlnPlot(Fasolo_AAA2_1, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
 
+#########sample4########
+Fasolo_AAA2_2 <- "E:/sc-RNAseq/CMH_human_AAA_Integration/GSE237230_RAW/Fasolo_AAA2_2"
+Fasolo_AAA2_2 <- Read10X(data.dir = Fasolo_AAA2_2, gene.column = 2)
+Fasolo_AAA2_2 <- CreateSeuratObject(counts = Fasolo_AAA2_2, project = "AAA11")
+Fasolo_AAA2_2[["Library"]] <- "Fasolo_AAA2_2"
+Fasolo_AAA2_2[["Condition"]] <- "AAA"
+Fasolo_AAA2_1[["percent.mt"]] <- PercentageFeatureSet(Fasolo_AAA2_1, pattern = "^MT-")
+VlnPlot(Fasolo_AAA2_1, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
+Fasolo_AAA2_1 <- subset(Fasolo_AAA2_1, subset = nFeature_RNA > 200 & nCount_RNA < 50000 & percent.mt < 10)
+VlnPlot(Fasolo_AAA2_1, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
+
+#########sample5########
+Fasolo_AAA3_1 <- "E:/sc-RNAseq/CMH_human_AAA_Integration/GSE237230_RAW/Fasolo_AAA3_1"
+Fasolo_AAA3_1 <- Read10X(data.dir = Fasolo_AAA3_1, gene.column = 2)
+Fasolo_AAA3_1 <- CreateSeuratObject(counts = Fasolo_AAA3_1, project = "AAA12")
+Fasolo_AAA3_1[["Library"]] <- "Fasolo_AAA3_1"
+Fasolo_AAA3_1[["Condition"]] <- "AAA"
+Fasolo_AAA3_1[["percent.mt"]] <- PercentageFeatureSet(Fasolo_AAA3_1, pattern = "^MT-")
+VlnPlot(Fasolo_AAA3_1, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
+Fasolo_AAA3_1 <- subset(Fasolo_AAA3_1, subset = nFeature_RNA > 200 & nCount_RNA < 50000 & percent.mt < 10)
+VlnPlot(Fasolo_AAA3_1, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
+
+#########sample6########
+Fasolo_AAA3_2 <- "E:/sc-RNAseq/CMH_human_AAA_Integration/GSE237230_RAW/Fasolo_AAA3_2"
+Fasolo_AAA3_2 <- Read10X(data.dir = Fasolo_AAA3_2, gene.column = 2)
+Fasolo_AAA3_2 <- CreateSeuratObject(counts = Fasolo_AAA3_2, project = "AAA13")
+Fasolo_AAA3_2[["Library"]] <- "Fasolo_AAA3_2"
+Fasolo_AAA3_2[["Condition"]] <- "AAA"
+Fasolo_AAA3_2[["percent.mt"]] <- PercentageFeatureSet(Fasolo_AAA3_2, pattern = "^MT-")
+VlnPlot(Fasolo_AAA3_2, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
+Fasolo_AAA3_2 <- subset(Fasolo_AAA3_2, subset = nFeature_RNA > 200 & nCount_RNA < 50000 & percent.mt < 10)
+VlnPlot(Fasolo_AAA3_2, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
+
+#########sample7########
+Fasolo_AAA4_1 <- "E:/sc-RNAseq/CMH_human_AAA_Integration/GSE237230_RAW/Fasolo_AAA4_1"
+Fasolo_AAA4_1 <- Read10X(data.dir = Fasolo_AAA4_1, gene.column = 2)
+Fasolo_AAA4_1 <- CreateSeuratObject(counts = Fasolo_AAA4_1, project = "AAA14")
+Fasolo_AAA4_1[["Library"]] <- "Fasolo_AAA4_1"
+Fasolo_AAA4_1[["Condition"]] <- "AAA"
+Fasolo_AAA4_1[["percent.mt"]] <- PercentageFeatureSet(Fasolo_AAA4_1, pattern = "^MT-")
+VlnPlot(Fasolo_AAA4_1, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
+Fasolo_AAA4_1 <- subset(Fasolo_AAA4_1, subset = nFeature_RNA > 200 & nCount_RNA < 50000 & percent.mt < 10)
+VlnPlot(Fasolo_AAA4_1, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
+
+#########sample8########
+Fasolo_AAA4_2 <- "E:/sc-RNAseq/CMH_human_AAA_Integration/GSE237230_RAW/Fasolo_AAA4_2"
+Fasolo_AAA4_2 <- Read10X(data.dir = Fasolo_AAA4_2, gene.column = 2)
+Fasolo_AAA4_2 <- CreateSeuratObject(counts = Fasolo_AAA4_2, project = "AAA15")
+Fasolo_AAA4_2[["Library"]] <- "Fasolo_AAA4_2"
+Fasolo_AAA4_2[["Condition"]] <- "AAA"
+Fasolo_AAA4_2[["percent.mt"]] <- PercentageFeatureSet(Fasolo_AAA4_2, pattern = "^MT-")
+VlnPlot(Fasolo_AAA4_2, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
+Fasolo_AAA4_2 <- subset(Fasolo_AAA4_2, subset = nFeature_RNA > 200 & nCount_RNA < 50000 & percent.mt < 10)
+VlnPlot(Fasolo_AAA4_2, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
+
+CDF_Data <- merge(
+  x = Cai_AAA1,
+  y = list(
+    Cai_AAA1, Cai_AAA2, Cai_AAA3, Cai_Con1, Cai_Con2, Cai_Con3,
+    Davis_AAA1, Davis_AAA2, Davis_AAA3, Davis_AAA4, Davis_C1, Davis_C2,
+    Fasolo_AAA1_1, Fasolo_AAA1_2, Fasolo_AAA2_1, Fasolo_AAA2_2,
+    Fasolo_AAA3_1, Fasolo_AAA3_2, Fasolo_AAA4_1, Fasolo_AAA4_2
+  ))
 
 
+CDF_Data <- NormalizeData(CDF_Data, verbose = FALSE)
+CDF_Data <-FindVariableFeatures(CDF_Data, selection.method = "vst", nfeatures = 2000)
+CDF_Data <-ScaleData(CDF_Data,verbose = FALSE) 
+CDF_Data <-RunPCA(CDF_Data, verbose = FALSE)
 
+options(repr.plot.height = 2.5, repr.plot.width = 6)
+CDF_Data <- CDF_Data %>% 
+  RunHarmony("Library", plot_convergence = TRUE)
 
+CDF_Data <- CDF_Data %>% 
+  RunUMAP(reduction = "harmony", dims = 1:30) %>% 
+  FindNeighbors(reduction = "harmony", dims = 1:30) %>% 
+  FindClusters(resolution = 0.2) %>% 
+  identity()
 
-
+DimPlot(CDF_Data,reduction = "umap", label = T, label.size = 4)
+DimPlot(CDF_Data,reduction = "umap", label = T, label.size = 4, group.by = "Condition")
+DimPlot(CDF_Data,reduction = "umap", label = T, label.size = 4, group.by = "Library")
